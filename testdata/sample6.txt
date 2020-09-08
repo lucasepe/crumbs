@@ -1,0 +1,8 @@
+* main idea
+** <u>topic 1</u>
+*** sub <sub>topic</sub>
+*** sub <i>topic</i>
+**** <s>sub topic</s>
+**** sub <o>topic</o>
+** topic <b>2</b>
+*** sub <sup>topic</sup>

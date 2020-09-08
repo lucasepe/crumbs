@@ -1,0 +1,35 @@
+parent1
+	child1
+	child2
+	child3
+		child3.1
+		child3.2
+	child4
+
+parent2
+	child1
+
+parent3
+	child1
+	child2
+	child3
+		child3.1
+		child3.2
+	child4
+
+parent4
+	child1
+
+parent5
+	child1
+	child2
+	child3
+		child3.1
+		child3.2
+			pippo
+			pluto
+				paperino
+	child4
+
+parent6
+	child1
