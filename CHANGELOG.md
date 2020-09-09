@@ -14,5 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - updated the README markdown file
 
+### Fixed
+- 🐛 removed `go.sum` from the .gitignore file 
+
 ## [0.1.0] - 2020-09-08
 - 🎉 First release!

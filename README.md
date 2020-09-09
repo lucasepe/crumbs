@@ -128,7 +128,7 @@ git clone https://github.com/lucasepe/crumbs.git
 ### Change dir to the tool folder
 
 ```bash
-cd crumbs/cli
+cd crumbs/crumbs
 ```
 
 ### Run GoReleaser
