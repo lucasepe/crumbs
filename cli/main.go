@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -31,8 +32,9 @@ var (
 	version = "dev"
 	commit  = "none"
 
-	flagVertical  bool
-	flagImagePath string
+	flagVertical   bool
+	flagWrapLim    uint
+	flagImagesPath string
 )
 
 func main() {
@@ -57,12 +59,11 @@ func main() {
 		os.Exit(2)
 	}
 
-	opts := []gv.GraphOption{gv.Vertical(flagVertical)}
-	if len(flagImagePath) > 0 {
-		opts = append(opts, gv.ImagesPath(flagImagePath))
+	cfg := gv.RenderConfig{
+		WrapTextLimit:  flagWrapLim,
+		VerticalLayout: flagVertical,
 	}
-
-	if err = gv.Render(os.Stdout, entry, opts...); err != nil {
+	if err = gv.Render(os.Stdout, entry, cfg); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		os.Exit(1)
 	}
@@ -82,7 +83,9 @@ func readFromStdIn() (*crumbs.Entry, error) {
 			return nil, err
 		}
 
-		return crumbs.FromString(string(dat))
+		text := bytes.NewBuffer(dat).String()
+		lines := strings.SplitAfter(text, "\n")
+		return crumbs.ParseLines(lines, flagImagesPath)
 	}
 
 	return nil, nil
@@ -104,7 +107,9 @@ func readFromFile() (*crumbs.Entry, error) {
 		return nil, err
 	}
 
-	return crumbs.FromString(string(dat))
+	text := bytes.NewBuffer(dat).String()
+	lines := strings.SplitAfter(text, "\n")
+	return crumbs.ParseLines(lines, flagImagesPath)
 }
 
 func configureFlags() {
@@ -134,8 +139,10 @@ func configureFlags() {
 
 	flag.CommandLine.BoolVar(&flagVertical, "vertical", false,
 		"layout entries as vertical directed graph")
-	//flag.CommandLine.StringVar(&flagImagePath, "images-path", "",
-	//	"list of directories (each separated by a semicolon for Windows or a colon for all other OS) in which to look for image files ")
+	flag.CommandLine.UintVar(&flagWrapLim, "lim", 28, "wraps each line within this width in characters")
+
+	flag.CommandLine.StringVar(&flagImagesPath, "images-path", "./", "folder in which to look for image files")
+	//flag.CommandLine.StringVar(&flagImagesType, "images-type", "png", "images file extension [png,jpg,svg]")
 
 	flag.CommandLine.Parse(os.Args[1:])
 }
