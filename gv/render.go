@@ -10,22 +10,31 @@ import (
 	"github.com/lucasepe/crumbs/text"
 )
 
+// RenderConfig defines some render parameters.
+type RenderConfig struct {
+	VerticalLayout bool
+	WrapTextLimit  uint
+}
+
 // Render translates the mind note tree to a
 // graphviz dot language definition.
-func Render(wr io.Writer, note *crumbs.Entry, opts ...GraphOption) error {
-	gr := newGraph(opts...)
-	renderTree(gr, note.Root(), sanitizer(30))
+func Render(wr io.Writer, note *crumbs.Entry, cfg RenderConfig) error {
+	htmlize := htmlLabelMaker(cfg.WrapTextLimit)
+
+	gr := newGraph(Vertical(cfg.VerticalLayout))
+
+	renderTree(gr, note.Root(), htmlize)
+
 	_, err := io.WriteString(wr, gr.String())
 	return err
 }
 
 // render a tree node (the node, and its children)
-func renderTree(gr *dot.Graph, el *crumbs.Entry, sanify func(string) string) {
+func renderTree(gr *dot.Graph, el *crumbs.Entry, htmlize func(*crumbs.Entry) string) {
 	tintFor := colorSupplier()
-	asHTML := htmlLabelMaker(30)
 
 	if el.Level() > 0 {
-		createNode(gr, el.ID(), nodeLabel(asHTML(el), true))
+		createNode(gr, el.ID(), nodeLabel(htmlize(el), true))
 	}
 
 	if el.Parent() != nil {
@@ -33,24 +42,7 @@ func renderTree(gr *dot.Graph, el *crumbs.Entry, sanify func(string) string) {
 	}
 
 	for _, child := range el.Childrens() {
-		renderTree(gr, child, sanify)
-	}
-}
-
-// sanitizer wraps the given string within lim
-// width in characters and does some sanification
-func sanitizer(lim uint) func(string) string {
-	escaper := strings.NewReplacer(
-		`&`, "&amp;",
-		`'`, "&#39;",
-		`"`, "&#34;",
-	)
-
-	return func(txt string) string {
-		res := text.WrapString(txt, lim)
-		res = escaper.Replace(res)
-		res = strings.ReplaceAll(res, "\n", "<br/>")
-		return res
+		renderTree(gr, child, htmlize)
 	}
 }
 
@@ -81,7 +73,10 @@ func htmlLabelMaker(lim uint) func(*crumbs.Entry) string {
 	)
 
 	return func(note *crumbs.Entry) string {
-		label := text.WrapString(note.Text(), lim)
+		label := strings.TrimSpace(note.Text())
+		if lim > 0 {
+			label = text.WrapString(label, lim)
+		}
 		label = escaper.Replace(label)
 		label = strings.ReplaceAll(label, "\n", "<br/>")
 

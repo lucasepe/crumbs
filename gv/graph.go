@@ -46,6 +46,7 @@ func newGraph(opts ...GraphOption) *dot.Graph {
 	res.Attr("fontname", "Fira Code")
 	res.Attr("fontsize", "14")
 	res.Attr("splines", "curved")
+	res.Attr("concentrate", "true")
 	res.Attrs("orientation", "portrait")
 
 	for _, opt := range opts {
@@ -71,7 +72,7 @@ func createEdge(gr *dot.Graph, fid, tid string, color string) error {
 
 	res.Attr("fontname", "Fira Code")
 	res.Attr("fontsize", "10")
-	res.Attr("penwidth", "3")
+	res.Attr("penwidth", "2.5")
 	//res.Attr("xlabels", strconv.Itoa(lvl))
 
 	if strings.TrimSpace(color) != "" {

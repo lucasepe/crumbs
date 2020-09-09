@@ -1,19 +1,17 @@
 package crumbs
 
 import (
+	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/teris-io/shortid"
 )
 
-// FromString builds the tree parsing a string.
-func FromString(src string) (*Entry, error) {
+// ParseLines parses a slice of text lines and builds the tree.
+func ParseLines(lines []string, iconspath string) (*Entry, error) {
 	mkID := idGenerator()
-	checkIcon := lookForIcon()
-
-	// splits the source at newlines
-	splits := strings.SplitAfter(src, "\n")
+	checkIcon := lookForIcon(iconspath)
 
 	// generate a short id for the root node
 	rootID, err := mkID()
@@ -26,7 +24,7 @@ func FromString(src string) (*Entry, error) {
 
 	node := root
 	nodeDepth := 0
-	for _, el := range splits {
+	for _, el := range lines {
 		// skip empty lines
 		if strings.TrimSpace(el) == "" {
 			continue
@@ -106,24 +104,6 @@ func newEmptyNote(id string) *Entry {
 	return f
 }
 
-/**** Uncomment to show the 'Global setup way'
-
-// newID returns a new short id.
-func newID() (string, error) {
-	return sid.Generate()
-}
-
-var sid *shortid.Shortid
-
-// init() is called when the package is initialized.
-func init() {
-	var err error
-	if sid, err = shortid.New(1, shortid.DefaultABC, 2342); err != nil {
-		panic(err)
-	}
-}
-****/
-
 // idGenerator generates a new short id at each invocation.
 func idGenerator() func() (string, error) {
 	sid, err := shortid.New(1, shortid.DefaultABC, 2342)
@@ -138,14 +118,14 @@ func idGenerator() func() (string, error) {
 	}
 }
 
-func lookForIcon() func(note *Entry) {
+func lookForIcon(iconspath string) func(note *Entry) {
 	re := regexp.MustCompile(`^\[{2}(.*?)\]{2}`)
 
 	return func(note *Entry) {
 		str := note.text
 		res := re.FindStringSubmatch(str)
 		if len(res) > 0 {
-			note.icon = strings.TrimSpace(res[1])
+			note.icon = filepath.Join(iconspath, strings.TrimSpace(res[1]))
 			note.text = re.ReplaceAllString(str, "")
 		}
 	}

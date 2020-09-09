@@ -1,3 +1,4 @@
+
 # Crumbs
 
 > Turn asterisk-indented text lines into mind maps.
@@ -54,6 +55,9 @@ Here the output:
 ## Example (with icons)
 
 You can, eventually, add images too (one for text line) using a special syntax: `[[path/to/image.png]]`
+
+- starting from the release v0.2.0 you can specify the image path from the command line `-image-path` flag
+- if you specify the flag `-image-path` you can wriate `[[image.png]]` instead of `[[path/to/image.png]]`
 
 ```text
 * [[./png/bulb.png]] main idea
