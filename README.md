@@ -115,33 +115,14 @@ and the output is...
 
 # Installation Steps
 
-To build the binaries by yourself, assuming that you have Go installed, you need [GoReleaser](https://goreleaser.com/intro/).
-
-Here the steps:
-
-### Grab the source code
+In order to use the crumbs command, compile it using the following command:
 
 ```bash
-git clone https://github.com/lucasepe/crumbs.git
+go get -u github.com/lucasepe/crumbs/crumbs
 ```
 
-### Change dir to the tool folder
+This will create the crumbs executable under your $GOPATH/bin directory.
 
-```bash
-cd crumbs/crumbs
-```
-
-### Run GoReleaser
-
-```bash
-goreleaser --rm-dist --snapshot --skip-publish
-```
-
-you will found the binaries for:
-
-- MacOS into the folder _dist/crumbs_darwin_amd64/_
-- Linux into the folder _dist/crumbs_linux_amd64/_
-- Windows into the folder _dist/crumbs_windows_amd64/_
 
 ## Ready-To-Use Releases 
 

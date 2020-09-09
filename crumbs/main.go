@@ -29,8 +29,7 @@ Crafted with passion by Luca Sepe - https://github.com/lucasepe/crumbs`
 )
 
 var (
-	version = "dev"
-	commit  = "none"
+	version = "0.2.0"
 
 	flagVertical   bool
 	flagWrapLim    uint
