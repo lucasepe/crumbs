@@ -47,7 +47,7 @@ func newGraph(opts ...GraphOption) *dot.Graph {
 	res.Attr("fontsize", "14")
 	res.Attr("splines", "curved")
 	res.Attr("concentrate", "true")
-	res.Attrs("orientation", "portrait")
+	res.Attr("orientation", "portrait")
 
 	for _, opt := range opts {
 		opt(res)
