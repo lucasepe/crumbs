@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -74,26 +73,7 @@ func readEntry() (*crumbs.Entry, error) {
 	return crumbs.ParseLines(lines, flagImagesPath)
 }
 
-func tryFileStat(r io.Reader) (os.FileInfo, error) {
-	object, ok := r.(interface {
-		io.Reader
-		Stat() (os.FileInfo, error)
-	})
-	if ok {
-		return object.Stat()
-	}
-	return nil, nil
-}
-
-var errCharDevice = errors.New("operation performed on character device")
-
 func readFileObject(r io.Reader, limit int64) ([]byte, error) {
-	i, _ := tryFileStat(r)
-	if i != nil {
-		if i.Mode()&os.ModeCharDevice > 0 {
-			return nil, errCharDevice
-		}
-	}
 	lr := io.LimitReader(r, limit)
 	src, err := ioutil.ReadAll(lr)
 	return src, err
