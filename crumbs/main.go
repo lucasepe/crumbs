@@ -27,7 +27,7 @@ Crafted with passion by Luca Sepe - https://github.com/lucasepe/crumbs`
 )
 
 var (
-	version = "0.2.0"
+	version = "0.3.0"
 
 	flagVertical   bool
 	flagWrapLim    uint
