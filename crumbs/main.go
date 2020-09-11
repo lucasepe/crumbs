@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -16,8 +14,8 @@ import (
 )
 
 const (
-	maxFileSize = 512 * 1000 // 512 Kb
-	banner      = `
+	maxFileSize int64 = 512 * 1000 // 512 Kb
+	banner            = `
     __  ____  __ __  ___ ___  ____    _____
    /  ]|    \|  |  ||   |   ||    \  / ___/ v{{VERSION}}
   /  / |  D  )  |  || _   _ ||  o  )(   \_ 
@@ -39,23 +37,10 @@ var (
 func main() {
 	configureFlags()
 
-	var entry *crumbs.Entry
-	var err error
-	if entry, err = readFromStdIn(); err != nil {
+	entry, err := readEntry()
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		os.Exit(1)
-	}
-
-	if entry == nil {
-		if entry, err = readFromFile(); err != nil {
-			fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
-			os.Exit(1)
-		}
-	}
-
-	if entry == nil {
-		flag.CommandLine.Usage()
-		os.Exit(2)
 	}
 
 	cfg := gv.RenderConfig{
@@ -68,47 +53,39 @@ func main() {
 	}
 }
 
-func readFromStdIn() (*crumbs.Entry, error) {
-	info, err := os.Stdin.Stat()
-	if err != nil {
-		return nil, err
+func readInput() ([]byte, error) {
+	limit := maxFileSize
+	args := flag.Args()
+	if len(args) == 0 {
+		return readFileObject(os.Stdin, limit)
 	}
-
-	if (info.Mode() & os.ModeCharDevice) != os.ModeCharDevice {
-		reader := io.LimitReader(bufio.NewReader(os.Stdin), maxFileSize)
-
-		dat, err := ioutil.ReadAll(reader)
-		if err != nil {
-			return nil, err
-		}
-
-		text := bytes.NewBuffer(dat).String()
-		lines := strings.SplitAfter(text, "\n")
-		return crumbs.ParseLines(lines, flagImagesPath)
-	}
-
-	return nil, nil
+	return readFile(args[0], limit)
 }
 
-func readFromFile() (*crumbs.Entry, error) {
-	if len(flag.Args()) == 0 {
-		return nil, nil
-	}
-
-	reader, err := os.Open(flag.Args()[0])
+func readEntry() (*crumbs.Entry, error) {
+	src, err := readInput()
 	if err != nil {
 		return nil, err
 	}
-	defer reader.Close()
-
-	dat, err := ioutil.ReadAll(io.LimitReader(reader, maxFileSize))
-	if err != nil {
-		return nil, err
-	}
-
-	text := bytes.NewBuffer(dat).String()
+	text := string(src)
 	lines := strings.SplitAfter(text, "\n")
 	return crumbs.ParseLines(lines, flagImagesPath)
+}
+
+func readFileObject(r io.Reader, limit int64) ([]byte, error) {
+	lr := io.LimitReader(r, limit)
+	src, err := ioutil.ReadAll(lr)
+	return src, err
+}
+
+func readFile(name string, limit int64) ([]byte, error) {
+	r, err := os.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	src, err := readFileObject(r, limit)
+	r.Close()
+	return src, err
 }
 
 func configureFlags() {
