@@ -2,9 +2,6 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/emicklei/dot v0.14.0 h1:DJbbkKThQ0nW361NB79CqrWcKpYR1JoqJB3FcTUgBEU=
 github.com/emicklei/dot v0.14.0/go.mod h1:DeV7GvQtIw4h2u73RKBkkFdvVAz0D9fzeJrgPW6gy/s=
-github.com/lucasepe/crumbs v0.2.0/go.mod h1:9xjzgSqtEjyE7u0qdfici5bukWn2m3iTwBOtn5V9Ut8=
-github.com/lucasepe/crumbs/crumbs v0.0.0-20200911185848-e9e9a4af517c h1:xN/JSblih4yUqWShy9hrWnLmQP9udoFqo1rYHePzIlY=
-github.com/lucasepe/crumbs/crumbs v0.0.0-20200911185848-e9e9a4af517c/go.mod h1:6iLM2VGL2y4HotHrS+rX5PNEHEcjCDisHn2ifWnWXi0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
