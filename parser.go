@@ -1,6 +1,7 @@
 package crumbs
 
 import (
+	"fmt"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -9,9 +10,9 @@ import (
 )
 
 // ParseLines parses a slice of text lines and builds the tree.
-func ParseLines(lines []string, iconspath string) (*Entry, error) {
+func ParseLines(lines []string, imagesPath, imagesSuffix string) (*Entry, error) {
 	mkID := idGenerator()
-	checkIcon := lookForIcon(iconspath)
+	checkIcon := lookForIcon(imagesPath, imagesSuffix)
 
 	// generate a short id for the root node
 	rootID, err := mkID()
@@ -32,6 +33,11 @@ func ParseLines(lines []string, iconspath string) (*Entry, error) {
 
 		// count depth
 		childDepth := depth(el)
+
+		// case: no leading 'stars' (skip line)
+		if childDepth == 0 {
+			continue
+		}
 
 		// trim leading 'stars', then the spaces
 		text := el[childDepth:]
@@ -118,14 +124,17 @@ func idGenerator() func() (string, error) {
 	}
 }
 
-func lookForIcon(iconspath string) func(note *Entry) {
+func lookForIcon(imagesPath, imagesSuffix string) func(note *Entry) {
 	re := regexp.MustCompile(`^\[{2}(.*?)\]{2}`)
 
 	return func(note *Entry) {
 		str := note.text
 		res := re.FindStringSubmatch(str)
 		if len(res) > 0 {
-			note.icon = filepath.Join(iconspath, strings.TrimSpace(res[1]))
+			note.icon = filepath.Join(imagesPath, strings.TrimSpace(res[1]))
+			if len(imagesSuffix) > 0 {
+				note.icon = fmt.Sprintf("%s.%s", note.icon, imagesSuffix)
+			}
 			note.text = re.ReplaceAllString(str, "")
 		}
 	}

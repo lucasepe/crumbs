@@ -56,8 +56,9 @@ Here the output:
 
 You can, eventually, add images too (one for text line) using a special syntax: `[[path/to/image.png]]`
 
-- starting from the release v0.2.0 you can specify the image path from the command line `-image-path` flag
-- if you specify the flag `-image-path` you can wriate `[[image.png]]` instead of `[[path/to/image.png]]`
+- if you specify the flag `-image-path` you can write `[[image.png]]` instead of `[[path/to/image.png]]`
+- if you specify the flag `-image-type` you can write `[[path/to/image]]` instead of `[[path/to/image.png]]`
+- therefore if you specify both you can write `[[image]]` instead of `[[path/to/image.png]]`
 
 ```text
 * [[./png/bulb.png]] main idea

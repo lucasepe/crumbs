@@ -32,6 +32,7 @@ var (
 	flagVertical   bool
 	flagWrapLim    uint
 	flagImagesPath string
+	flagImagesType string
 )
 
 func main() {
@@ -69,13 +70,12 @@ func readEntry() (*crumbs.Entry, error) {
 	}
 	text := string(src)
 	lines := strings.SplitAfter(text, "\n")
-	return crumbs.ParseLines(lines, flagImagesPath)
+	return crumbs.ParseLines(lines, flagImagesPath, flagImagesType)
 }
 
 func readFileObject(r io.Reader, limit int64) ([]byte, error) {
 	lr := io.LimitReader(r, limit)
-	src, err := ioutil.ReadAll(lr)
-	return src, err
+	return ioutil.ReadAll(lr)
 }
 
 func readFile(name string, limit int64) ([]byte, error) {
@@ -83,9 +83,9 @@ func readFile(name string, limit int64) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	src, err := readFileObject(r, limit)
-	r.Close()
-	return src, err
+	defer r.Close()
+
+	return readFileObject(r, limit)
 }
 
 func configureFlags() {
@@ -117,8 +117,8 @@ func configureFlags() {
 		"layout entries as vertical directed graph")
 	flag.CommandLine.UintVar(&flagWrapLim, "lim", 28, "wraps each line within this width in characters")
 
-	flag.CommandLine.StringVar(&flagImagesPath, "images-path", "./", "folder in which to look for image files")
-	//flag.CommandLine.StringVar(&flagImagesType, "images-type", "png", "images file extension [png,jpg,svg]")
+	flag.CommandLine.StringVar(&flagImagesPath, "images-path", "", "folder in which to look for image files")
+	flag.CommandLine.StringVar(&flagImagesType, "images-type", "", "images file extension [png,jpg,svg]")
 
 	flag.CommandLine.Parse(os.Args[1:])
 }
